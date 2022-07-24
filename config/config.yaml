@@ -1,0 +1,24 @@
+# 权限配置
+auth:
+   username: 'admin' # 用户账号
+   password: 'admin' # 用户密码
+   enableAdmin: true # 是否开启认证
+   header: 'authorization' # 验证头
+   separator: ':' # 分割符
+
+# grpc 配置
+grpc:
+   addr: '0.0.0.0:4567' # grpc地址
+
+# http 配置
+http:
+   addr: '0.0.0.0:5678' # http地址
+
+# 数据库配置
+databases:
+   shard: 10 # 分片数量
+   path: './data' # 数据目录
+
+# 词典配置
+dictionary:
+   path: './data/dictionary.txt' # 词典目录

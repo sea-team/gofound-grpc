@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package gofound;
+option go_package = "gofound-grpc/gofound;gofoundpd";
+
+
+service GofoundService{
+    rpc Welcome(EmptyRequest) returns (WelcomeResponse);
+}
+
+message WelcomeResponse{
+    string msg = 1;
+}
+
+// 空请求 
+message EmptyRequest{}
