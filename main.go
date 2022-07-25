@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	gofoundpb "gofound-grpc/api/gen"
+	gofoundpb "gofound-grpc/api/gen/v1"
 	"gofound-grpc/global"
 	"gofound-grpc/initialize"
 	"gofound-grpc/interceptor"

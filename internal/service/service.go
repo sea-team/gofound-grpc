@@ -1,7 +1,7 @@
 package service
 
 import (
-	gofoundpb "gofound-grpc/api/gen"
+	gofoundpb "gofound-grpc/api/gen/v1"
 )
 
 type GofoundService struct {

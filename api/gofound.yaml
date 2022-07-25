@@ -1,0 +1,7 @@
+type: google.api.Service
+config_version: 3
+
+http:
+   rules:
+      - selector: gofound.v1.GofoundService.Welcome
+        get: /v1/welcome

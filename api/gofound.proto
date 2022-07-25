@@ -1,7 +1,7 @@
 syntax = "proto3";
 
-package gofound;
-option go_package = "gofound-grpc/gofound;gofoundpd";
+package gofound.v1;
+option go_package = "gofound-grpc/api/gen/v1;gofoundpd";
 
 
 service GofoundService{
