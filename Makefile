@@ -1,7 +1,7 @@
 API_PROTO_PATH=./api
-GO_OUT_PATH=$(API_PROTO_PATH)/gen
+GO_OUT_PATH=$(API_PROTO_PATH)/gen/v1
 PROTO_FILE=$(API_PROTO_PATH)/gofound.proto
-GATEWAY_PROTO_YAML=./gateway/gofound.yaml
+GATEWAY_PROTO_YAML=$(API_PROTO_PATH)/gofound.yaml
 
 .PHONY: init
 init:
@@ -28,5 +28,13 @@ gateway:
 	 --grpc-gateway_out=paths=source_relative,grpc_api_configuration=$(GATEWAY_PROTO_YAML):$(GO_OUT_PATH) $(PROTO_FILE)
 
 
+.PHONY: build
+build:	
+	docker stop gofound
+	docker rm gofound
+	docker rmi gofound:v1
+	docker build -t gofound:v1 -f ./Dockerfile .
+	docker run --name gofound -p 4567:4567 -p 5678:5678 -d gofound:v1
+
 .PHONY: all
-all: init api gateway
+all: init api gateway build

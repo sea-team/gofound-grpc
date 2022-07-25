@@ -35,7 +35,7 @@ func NewGofoundServiceClient(cc grpc.ClientConnInterface) GofoundServiceClient {
 
 func (c *gofoundServiceClient) Welcome(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*WelcomeResponse, error) {
 	out := new(WelcomeResponse)
-	err := c.cc.Invoke(ctx, "/gofound.GofoundService/Welcome", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/gofound.v1.GofoundService/Welcome", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func _GofoundService_Welcome_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gofound.GofoundService/Welcome",
+		FullMethod: "/gofound.v1.GofoundService/Welcome",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GofoundServiceServer).Welcome(ctx, req.(*EmptyRequest))
@@ -92,7 +92,7 @@ func _GofoundService_Welcome_Handler(srv interface{}, ctx context.Context, dec f
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var GofoundService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "gofound.GofoundService",
+	ServiceName: "gofound.v1.GofoundService",
 	HandlerType: (*GofoundServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
