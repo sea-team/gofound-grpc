@@ -6,6 +6,56 @@ option go_package = "gofound-grpc/api/gen/v1;gofoundpd";
 
 service GofoundService{
     rpc Welcome(EmptyRequest) returns (WelcomeResponse);
+    rpc GC (EmptyRequest) returns (EmptyResponse);
+    rpc Status(EmptyRequest)returns(StatusResponse);
+}
+
+
+message StatusResponse{
+   CPU cup = 1;
+   Disk disk = 2;
+   Memory memory = 3;
+   System system = 4;
+}
+
+message CPU{
+    int32 cores = 1;
+    string model_name = 2;
+    double used_percent = 3;
+}
+
+message Disk{
+    double free = 1;
+    string fs_type = 2;
+    string path = 3;
+    double total = 4;
+    double used = 5;
+    double used_percent = 6;
+}
+
+message Memory{
+    double free = 1; 
+    double self = 2; 
+    double total = 3; 
+    double used = 4; 
+    double used_percent = 5; 
+}
+
+message System{
+    string os = 1;         
+	string arch = 2;          
+	int32 cores =  3; 
+	string version = 4;
+	int32 goroutines = 5;
+	string data_path = 6;
+	string dictionary_path = 7;
+	int32 gomaxprocs = 8;
+	int32 shard = 9;
+	double data_size = 10;
+	string executable = 11;
+	int32 dbs =12;
+	int32 pid = 13;
+	bool enable_auth = 14;
 }
 
 message WelcomeResponse{
@@ -14,3 +64,6 @@ message WelcomeResponse{
 
 // 空请求 
 message EmptyRequest{}
+
+// 空返回
+message EmptyResponse{}
