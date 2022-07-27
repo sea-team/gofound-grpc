@@ -23,6 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GofoundServiceClient interface {
 	Welcome(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*WelcomeResponse, error)
+	GC(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	Status(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 }
 
 type gofoundServiceClient struct {
@@ -42,11 +44,31 @@ func (c *gofoundServiceClient) Welcome(ctx context.Context, in *EmptyRequest, op
 	return out, nil
 }
 
+func (c *gofoundServiceClient) GC(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, "/gofound.v1.GofoundService/GC", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gofoundServiceClient) Status(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*StatusResponse, error) {
+	out := new(StatusResponse)
+	err := c.cc.Invoke(ctx, "/gofound.v1.GofoundService/Status", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GofoundServiceServer is the server API for GofoundService service.
 // All implementations must embed UnimplementedGofoundServiceServer
 // for forward compatibility
 type GofoundServiceServer interface {
 	Welcome(context.Context, *EmptyRequest) (*WelcomeResponse, error)
+	GC(context.Context, *EmptyRequest) (*EmptyResponse, error)
+	Status(context.Context, *EmptyRequest) (*StatusResponse, error)
 	mustEmbedUnimplementedGofoundServiceServer()
 }
 
@@ -56,6 +78,12 @@ type UnimplementedGofoundServiceServer struct {
 
 func (UnimplementedGofoundServiceServer) Welcome(context.Context, *EmptyRequest) (*WelcomeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Welcome not implemented")
+}
+func (UnimplementedGofoundServiceServer) GC(context.Context, *EmptyRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GC not implemented")
+}
+func (UnimplementedGofoundServiceServer) Status(context.Context, *EmptyRequest) (*StatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Status not implemented")
 }
 func (UnimplementedGofoundServiceServer) mustEmbedUnimplementedGofoundServiceServer() {}
 
@@ -88,6 +116,42 @@ func _GofoundService_Welcome_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GofoundService_GC_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GofoundServiceServer).GC(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gofound.v1.GofoundService/GC",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GofoundServiceServer).GC(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GofoundService_Status_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GofoundServiceServer).Status(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gofound.v1.GofoundService/Status",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GofoundServiceServer).Status(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GofoundService_ServiceDesc is the grpc.ServiceDesc for GofoundService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +162,14 @@ var GofoundService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Welcome",
 			Handler:    _GofoundService_Welcome_Handler,
+		},
+		{
+			MethodName: "GC",
+			Handler:    _GofoundService_GC_Handler,
+		},
+		{
+			MethodName: "Status",
+			Handler:    _GofoundService_Status_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
