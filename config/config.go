@@ -2,9 +2,11 @@ package config
 
 // Server 服务器配置
 type Server struct {
-	Auth Auth `mapstructure:"auth" yaml:"auth"` // 用户管理配置
-	GRPC GRPC `mapstructure:"grpc" yaml:"grpc"` // grpc配置
-	HTTP HTTP `mapstructure:"http" yaml:"http"` // http配置
+	Auth       Auth       `mapstructure:"auth" yaml:"auth"`             // 用户管理配置
+	GRPC       GRPC       `mapstructure:"grpc" yaml:"grpc"`             // grpc配置
+	HTTP       HTTP       `mapstructure:"http" yaml:"http"`             // http配置
+	Databases  Databases  `mapstructure:"databases" yaml:"databases"`   // 数据库配置
+	Dictionary Dictionary `mapstructure:"dictionary" yaml:"dictionary"` // 词典配置
 }
 
 // Auth 用户管理配置
@@ -28,7 +30,7 @@ type HTTP struct {
 
 // Databases 数据库配置
 type Databases struct {
-	Shard int8   `mapstructure:"shard" yaml:"shard"` // 分片数量
+	Shard int32  `mapstructure:"shard" yaml:"shard"` // 分片数量
 	Path  string `mapstructure:"path" yaml:"path"`   // 数据目录
 }
 

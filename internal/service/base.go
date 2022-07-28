@@ -25,7 +25,7 @@ func (s *GofoundService) GC(ctx context.Context, req *gofoundpb.EmptyRequest) (*
 
 // Status 服务器状态
 func (s *GofoundService) Status(ctx context.Context, req *gofoundpb.EmptyRequest) (*gofoundpb.StatusResponse, error) {
-	// TODO：获取每秒cpu数据比较耗时，需要传入1秒
+	// TODO：获取每秒cpu使用频率比较慢
 	cup, err := system.GetCPUInfo()
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
@@ -45,5 +45,6 @@ func (s *GofoundService) Status(ctx context.Context, req *gofoundpb.EmptyRequest
 		Cup:    cup,
 		Disk:   disk,
 		Memory: memory,
+		System: system.Env(),
 	}, nil
 }
