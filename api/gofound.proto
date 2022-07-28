@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "validate/validate.proto";
+import "google/protobuf/any.proto";
 package gofound.v1;
 option go_package = "gofound-grpc/api/gen/v1;gofoundpd";
 
@@ -8,8 +10,42 @@ service GofoundService{
     rpc Welcome(EmptyRequest) returns (WelcomeResponse);
     rpc GC (EmptyRequest) returns (EmptyResponse);
     rpc Status(EmptyRequest)returns(StatusResponse);
+    rpc Query (QueryRequest) returns (QueryResponse);
 }
 
+message QueryResponse{
+    double time = 1;            // 查询用时
+    int32 total = 2;            // 总数
+    int32 page_count = 3;       // 总页数
+    int32 page = 4;             // 页码
+    int32 limit = 5;            // 页大小
+    ResponseDoc documents = 6;  // 文档
+    repeated string words = 7;  // 搜索关键词
+}
+
+message ResponseDoc{
+    uint32 id = 1;
+    string text = 2;
+    map<string,google.protobuf.Any> document = 3;
+    string original_text = 4;
+    int32 score = 5;
+    repeated string keys = 6;
+}
+
+message QueryRequest{
+    string query = 1[(validate.rules).string.min_len = 1];          // 搜索关键词 
+    string order = 2[(validate.rules).string.min_len = 1];          // 排序类型
+    string score_exp = 3;                                           // 分数计算表达式
+    int32 page = 4[(validate.rules).int32={gte:1}];                 // 页码
+    int32 limit = 5[(validate.rules).int32={gte:1,lte:1000}];       // 每页大小，最大1000，超过报错
+    Highlight highlight = 6;                                        // 关键词高亮
+    string database = 7[(validate.rules).string.min_len = 1];       // 数据库名字
+}
+
+message Highlight{
+    string pre_tag = 1;     // 高亮前缀
+    string post_tag = 2;    // 高亮后缀
+}
 
 message StatusResponse{
    CPU cup = 1;

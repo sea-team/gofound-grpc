@@ -25,6 +25,7 @@ type GofoundServiceClient interface {
 	Welcome(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*WelcomeResponse, error)
 	GC(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	Status(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*StatusResponse, error)
+	Query(ctx context.Context, in *QueryRequest, opts ...grpc.CallOption) (*QueryResponse, error)
 }
 
 type gofoundServiceClient struct {
@@ -62,6 +63,15 @@ func (c *gofoundServiceClient) Status(ctx context.Context, in *EmptyRequest, opt
 	return out, nil
 }
 
+func (c *gofoundServiceClient) Query(ctx context.Context, in *QueryRequest, opts ...grpc.CallOption) (*QueryResponse, error) {
+	out := new(QueryResponse)
+	err := c.cc.Invoke(ctx, "/gofound.v1.GofoundService/Query", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GofoundServiceServer is the server API for GofoundService service.
 // All implementations must embed UnimplementedGofoundServiceServer
 // for forward compatibility
@@ -69,6 +79,7 @@ type GofoundServiceServer interface {
 	Welcome(context.Context, *EmptyRequest) (*WelcomeResponse, error)
 	GC(context.Context, *EmptyRequest) (*EmptyResponse, error)
 	Status(context.Context, *EmptyRequest) (*StatusResponse, error)
+	Query(context.Context, *QueryRequest) (*QueryResponse, error)
 	mustEmbedUnimplementedGofoundServiceServer()
 }
 
@@ -84,6 +95,9 @@ func (UnimplementedGofoundServiceServer) GC(context.Context, *EmptyRequest) (*Em
 }
 func (UnimplementedGofoundServiceServer) Status(context.Context, *EmptyRequest) (*StatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Status not implemented")
+}
+func (UnimplementedGofoundServiceServer) Query(context.Context, *QueryRequest) (*QueryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Query not implemented")
 }
 func (UnimplementedGofoundServiceServer) mustEmbedUnimplementedGofoundServiceServer() {}
 
@@ -152,6 +166,24 @@ func _GofoundService_Status_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GofoundService_Query_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GofoundServiceServer).Query(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gofound.v1.GofoundService/Query",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GofoundServiceServer).Query(ctx, req.(*QueryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GofoundService_ServiceDesc is the grpc.ServiceDesc for GofoundService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -170,6 +202,10 @@ var GofoundService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Status",
 			Handler:    _GofoundService_Status_Handler,
+		},
+		{
+			MethodName: "Query",
+			Handler:    _GofoundService_Query_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

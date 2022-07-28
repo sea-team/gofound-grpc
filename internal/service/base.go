@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	gofoundpb "gofound-grpc/api/gen/v1"
-	"gofound-grpc/internal/system"
+	"gofound-grpc/internal/searcher/system"
 	"runtime"
 
 	"google.golang.org/grpc/codes"
@@ -48,3 +48,6 @@ func (s *GofoundService) Status(ctx context.Context, req *gofoundpb.EmptyRequest
 		System: system.Env(),
 	}, nil
 }
+
+// Query 查询
+// func(s *GofoundService)Query
