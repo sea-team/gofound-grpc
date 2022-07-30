@@ -32,7 +32,7 @@ func main() {
 
 	var opts []grpc.ServerOption
 	var in []grpc.UnaryServerInterceptor
-	in = append(in, interceptor.GrpcRecover())
+	in = append(in, interceptor.GrpcRecover(), interceptor.Validator())
 	if global.CONFIG.Auth.EnableAdmin {
 		in = append(in, interceptor.VerifyAuth())
 	}

@@ -50,4 +50,6 @@ func (s *GofoundService) Status(ctx context.Context, req *gofoundpb.EmptyRequest
 }
 
 // Query 查询
-// func(s *GofoundService)Query
+func (s *GofoundService) Query(ctx context.Context, req *gofoundpb.QueryRequest) (*gofoundpb.QueryResponse, error) {
+	return &gofoundpb.QueryResponse{}, nil
+}
