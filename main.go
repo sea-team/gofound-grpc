@@ -23,6 +23,9 @@ func main() {
 
 	// 初始化解析器
 	initialize.InitViper(config)
+	// 初始化容器
+	initialize.InitContainer()
+	// 初始化业务逻辑
 
 	// 启动服务
 	lis, err := net.Listen("tcp", global.CONFIG.GRPC.Addr)
