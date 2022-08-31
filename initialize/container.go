@@ -7,7 +7,7 @@ import (
 )
 
 func InitContainer() *searcher.Container {
-	tokenizer := NewTokenizer(global.CONFIG.Databases.Path)
+	tokenizer := NewTokenizer(global.CONFIG.Dictionary.Path)
 	return NewContainer(tokenizer)
 }
 
