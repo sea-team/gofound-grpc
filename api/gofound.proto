@@ -5,7 +5,6 @@ import "google/protobuf/any.proto";
 package gofound.v1;
 option go_package = "gofound-grpc/api/gen/v1;gofoundpd";
 
-
 service GofoundService{
     rpc Welcome(EmptyRequest) returns (WelcomeResponse);
     rpc GC (EmptyRequest) returns (EmptyResponse);
@@ -19,7 +18,7 @@ message QueryResponse{
     int32 page_count = 3;       // 总页数
     int32 page = 4;             // 页码
     int32 limit = 5;            // 页大小
-    ResponseDoc documents = 6;  // 文档
+    repeated ResponseDoc documents = 6;  // 文档
     repeated string words = 7;  // 搜索关键词
 }
 

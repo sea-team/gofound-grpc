@@ -2,7 +2,7 @@
 auth:
    username: 'admin' # 用户账号
    password: 'admin' # 用户密码
-   enableAdmin: true # 是否开启认证
+   enableAdmin: false # 是否开启认证
    header: 'authorization' # 验证头 修改成其他需要在前面添加'Grpc-Metadata-'
    separator: ':' # 分割符
 
