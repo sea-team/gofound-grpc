@@ -86,9 +86,9 @@ func (s *GofoundService) Query(ctx context.Context, req *gofoundpb.QueryRequest)
 	if err != nil {
 		return nil, err
 	}
-	docs := make([]gofoundpb.ResponseDoc, len(res.Documents))
+	docs := make([]*gofoundpb.ResponseDoc, len(res.Documents))
 	for _, v := range res.Documents {
-		docs = append(docs, gofoundpb.ResponseDoc{
+		docs = append(docs, &gofoundpb.ResponseDoc{
 			Id:           v.Id,
 			Text:         v.Text,
 			Document:     v.Document,
@@ -98,7 +98,7 @@ func (s *GofoundService) Query(ctx context.Context, req *gofoundpb.QueryRequest)
 		})
 	}
 	if len(docs) == 0 {
-		docs = append(docs, gofoundpb.ResponseDoc{})
+		docs = append(docs, &gofoundpb.ResponseDoc{})
 	}
 	return &gofoundpb.QueryResponse{
 		Time:      res.Time,
@@ -106,7 +106,7 @@ func (s *GofoundService) Query(ctx context.Context, req *gofoundpb.QueryRequest)
 		PageCount: res.PageCount,
 		Page:      res.Page,
 		Limit:     res.Limit,
-		Documents: &docs[0],
+		Documents: docs,
 		Words:     res.Words,
 	}, nil
 }
