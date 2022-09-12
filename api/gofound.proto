@@ -1,100 +1,128 @@
 syntax = "proto3";
 
 import "validate/validate.proto";
-import "google/protobuf/any.proto";
+import "google/protobuf/struct.proto";
 package gofound.v1;
 option go_package = "gofound-grpc/api/gen/v1;gofoundpd";
 
 service GofoundService{
-    rpc Welcome(EmptyRequest) returns (WelcomeResponse);
-    rpc GC (EmptyRequest) returns (EmptyResponse);
-    rpc Status(EmptyRequest)returns(StatusResponse);
-    rpc Query (QueryRequest) returns (QueryResponse);
+  rpc Welcome(EmptyRequest) returns (OperationResponse);
+  rpc GC (EmptyRequest) returns (OperationResponse);
+  rpc Status(EmptyRequest)returns(StatusResponse);
+  rpc Query (QueryRequest) returns (QueryResponse);
+  rpc Index (SingleIndexRequest) returns (OperationResponse);
+  rpc BatchIndex (BatchIndexRequest) returns (OperationResponse);
+  rpc RemoveIndex (RemoveIndexRequest) returns (OperationResponse);
 }
 
 message QueryResponse{
-    double time = 1;            // 查询用时
-    int32 total = 2;            // 总数
-    int32 page_count = 3;       // 总页数
-    int32 page = 4;             // 页码
-    int32 limit = 5;            // 页大小
-    repeated ResponseDoc documents = 6;  // 文档
-    repeated string words = 7;  // 搜索关键词
+  double time = 1;            // 查询用时
+  int32 total = 2;            // 总数
+  int32 page_count = 3;       // 总页数
+  int32 page = 4;             // 页码
+  int32 limit = 5;            // 页大小
+  repeated ResponseDoc documents = 6;  // 文档
+  repeated string words = 7;  // 搜索关键词
 }
 
 message ResponseDoc{
-    uint32 id = 1;
-    string text = 2;
-    map<string,google.protobuf.Any> document = 3;
-    string original_text = 4;
-    int32 score = 5;
-    repeated string keys = 6;
+  uint32 id = 1;
+  string text = 2;
+  google.protobuf.Struct document = 3;
+  string original_text = 4;
+  int32 score = 5;
+  repeated string keys = 6;
 }
 
 message QueryRequest{
-    string query = 1[(validate.rules).string.min_len = 1];          // 搜索关键词 
-    string order = 2[(validate.rules).string.min_len = 1];          // 排序类型
-    string score_exp = 3;                                           // 分数计算表达式
-    int32 page = 4[(validate.rules).int32={gte:1}];                 // 页码
-    int32 limit = 5[(validate.rules).int32={gte:1,lte:1000}];       // 每页大小，最大1000，超过报错
-    Highlight highlight = 6;                                        // 关键词高亮
-    string database = 7[(validate.rules).string.min_len = 1];       // 数据库名字
+  string query = 1[(validate.rules).string.min_len = 1];          // 搜索关键词
+  string order = 2[(validate.rules).string.min_len = 1];          // 排序类型
+  string score_exp = 3;                                           // 分数计算表达式
+  int32 page = 4[(validate.rules).int32 = {gte:1}];                 // 页码
+  int32 limit = 5[(validate.rules).int32 = {gte:1,lte:1000}];       // 每页大小，最大1000，超过报错
+  Highlight highlight = 6;                                        // 关键词高亮
+  string database = 7[(validate.rules).string.min_len = 1];       // 数据库名字
 }
 
 message Highlight{
-    string pre_tag = 1;     // 高亮前缀
-    string post_tag = 2;    // 高亮后缀
+  string pre_tag = 1;     // 高亮前缀
+  string post_tag = 2;    // 高亮后缀
+}
+
+// 索引文档
+message IndexDoc{
+  int32 id = 1[(validate.rules).int32 = {gte:1}];
+  string text = 2;
+  google.protobuf.Struct document = 3;
+}
+
+// 索引操作请求
+message SingleIndexRequest{
+  IndexDoc index_doc = 1;
+  string database = 2;
+}
+
+// 批量添加索引操作请求
+message BatchIndexRequest{
+  repeated IndexDoc index_docs = 1;
+  string database = 2;
+}
+
+// 删除索引请求
+message RemoveIndexRequest{
+  int32 id = 1[(validate.rules).int32 = {gte:1}];
+  string database = 2;
 }
 
 message StatusResponse{
-   CPU cup = 1;
-   Disk disk = 2;
-   Memory memory = 3;
-   System system = 4;
+  CPU cup = 1;
+  Disk disk = 2;
+  Memory memory = 3;
+  System system = 4;
 }
 
 message CPU{
-    int32 cores = 1;
-    string model_name = 2;
-    double used_percent = 3;
+  int32 cores = 1;
+  string model_name = 2;
+  double used_percent = 3;
 }
 
 message Disk{
-    double free = 1;
-    string fs_type = 2;
-    string path = 3;
-    double total = 4;
-    double used = 5;
-    double used_percent = 6;
+  double free = 1;
+  string fs_type = 2;
+  string path = 3;
+  double total = 4;
+  double used = 5;
+  double used_percent = 6;
 }
 
 message Memory{
-    double free = 1; 
-    double self = 2; 
-    double total = 3; 
-    double used = 4; 
-    double used_percent = 5; 
+  double free = 1;
+  double self = 2;
+  double total = 3;
+  double used = 4;
+  double used_percent = 5;
 }
 
 message System{
-    string os = 1;         
-	string arch = 2;          
-	int32 cores =  3; 
-	string version = 4;
-	int32 goroutines = 5;
-	string data_path = 6;
-	string dictionary_path = 7;
-	int32 gomaxprocs = 8;
-	int32 shard = 9;
-	double data_size = 10;
-	string executable = 11;
-	int32 dbs =12;
-	int32 pid = 13;
-	bool enable_auth = 14;
+  string os = 1;
+  string arch = 2;
+  int32 cores = 3;
+  string version = 4;
+  int32 goroutines = 5;
+  string data_path = 6;
+  string dictionary_path = 7;
+  int32 gomaxprocs = 8;
+  int32 shard = 9;
+  double data_size = 10;
+  string executable = 11;
+  int32 dbs = 12;
+  int32 pid = 13;
+  bool enable_auth = 14;
 }
 
 message WelcomeResponse{
-    string msg = 1;
+  string msg = 1;
 }
 
 // 空请求 
@@ -102,3 +130,9 @@ message EmptyRequest{}
 
 // 空返回
 message EmptyResponse{}
+
+// 操作响应
+message OperationResponse{
+  bool state = 1;
+  string message = 2;
+}

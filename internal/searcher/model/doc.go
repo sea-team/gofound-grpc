@@ -1,12 +1,10 @@
 package model
 
-import "google.golang.org/protobuf/types/known/anypb"
-
 // IndexDoc 索引实体
 type IndexDoc struct {
-	Id       uint32                `json:"id,omitempty"`
-	Text     string                `json:"text,omitempty"`
-	Document map[string]*anypb.Any `json:"document,omitempty"`
+	Id       uint32                 `json:"id,omitempty"`
+	Text     string                 `json:"text,omitempty"`
+	Document map[string]interface{} `json:"document,omitempty"`
 }
 
 // StorageIndexDoc 文档对象

@@ -4,8 +4,6 @@ import (
 	gofoundpb "gofound-grpc/api/gen/v1"
 )
 
-var srv *Services
-
 type GofoundService struct {
 	gofoundpb.UnimplementedGofoundServiceServer
 }
@@ -16,11 +14,11 @@ func NewGofoundService() *GofoundService {
 }
 
 type Services struct {
-	Base *Base
+	Base  *Base
+	Index *Index
 }
 
 func NewServices() {
-	srv = &Services{
-		Base: NewBase(),
-	}
+	NewBase()
+	NewIndex()
 }

@@ -205,49 +205,32 @@ func (m *ResponseDoc) validate(all bool) error {
 
 	// no validation rules for Text
 
-	{
-		sorted_keys := make([]string, len(m.GetDocument()))
-		i := 0
-		for key := range m.GetDocument() {
-			sorted_keys[i] = key
-			i++
-		}
-		sort.Slice(sorted_keys, func(i, j int) bool { return sorted_keys[i] < sorted_keys[j] })
-		for _, key := range sorted_keys {
-			val := m.GetDocument()[key]
-			_ = val
-
-			// no validation rules for Document[key]
-
-			if all {
-				switch v := interface{}(val).(type) {
-				case interface{ ValidateAll() error }:
-					if err := v.ValidateAll(); err != nil {
-						errors = append(errors, ResponseDocValidationError{
-							field:  fmt.Sprintf("Document[%v]", key),
-							reason: "embedded message failed validation",
-							cause:  err,
-						})
-					}
-				case interface{ Validate() error }:
-					if err := v.Validate(); err != nil {
-						errors = append(errors, ResponseDocValidationError{
-							field:  fmt.Sprintf("Document[%v]", key),
-							reason: "embedded message failed validation",
-							cause:  err,
-						})
-					}
-				}
-			} else if v, ok := interface{}(val).(interface{ Validate() error }); ok {
-				if err := v.Validate(); err != nil {
-					return ResponseDocValidationError{
-						field:  fmt.Sprintf("Document[%v]", key),
-						reason: "embedded message failed validation",
-						cause:  err,
-					}
-				}
+	if all {
+		switch v := interface{}(m.GetDocument()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ResponseDocValidationError{
+					field:  "Document",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
 			}
-
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ResponseDocValidationError{
+					field:  "Document",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDocument()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ResponseDocValidationError{
+				field:  "Document",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
 		}
 	}
 
@@ -619,6 +602,533 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = HighlightValidationError{}
+
+// Validate checks the field values on IndexDoc with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *IndexDoc) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on IndexDoc with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in IndexDocMultiError, or nil
+// if none found.
+func (m *IndexDoc) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *IndexDoc) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetId() < 1 {
+		err := IndexDocValidationError{
+			field:  "Id",
+			reason: "value must be greater than or equal to 1",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Text
+
+	if all {
+		switch v := interface{}(m.GetDocument()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, IndexDocValidationError{
+					field:  "Document",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, IndexDocValidationError{
+					field:  "Document",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDocument()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return IndexDocValidationError{
+				field:  "Document",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return IndexDocMultiError(errors)
+	}
+
+	return nil
+}
+
+// IndexDocMultiError is an error wrapping multiple validation errors returned
+// by IndexDoc.ValidateAll() if the designated constraints aren't met.
+type IndexDocMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m IndexDocMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m IndexDocMultiError) AllErrors() []error { return m }
+
+// IndexDocValidationError is the validation error returned by
+// IndexDoc.Validate if the designated constraints aren't met.
+type IndexDocValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e IndexDocValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e IndexDocValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e IndexDocValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e IndexDocValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e IndexDocValidationError) ErrorName() string { return "IndexDocValidationError" }
+
+// Error satisfies the builtin error interface
+func (e IndexDocValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sIndexDoc.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = IndexDocValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = IndexDocValidationError{}
+
+// Validate checks the field values on SingleIndexRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SingleIndexRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SingleIndexRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SingleIndexRequestMultiError, or nil if none found.
+func (m *SingleIndexRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SingleIndexRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetIndexDoc()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SingleIndexRequestValidationError{
+					field:  "IndexDoc",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SingleIndexRequestValidationError{
+					field:  "IndexDoc",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetIndexDoc()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SingleIndexRequestValidationError{
+				field:  "IndexDoc",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Database
+
+	if len(errors) > 0 {
+		return SingleIndexRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SingleIndexRequestMultiError is an error wrapping multiple validation errors
+// returned by SingleIndexRequest.ValidateAll() if the designated constraints
+// aren't met.
+type SingleIndexRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SingleIndexRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SingleIndexRequestMultiError) AllErrors() []error { return m }
+
+// SingleIndexRequestValidationError is the validation error returned by
+// SingleIndexRequest.Validate if the designated constraints aren't met.
+type SingleIndexRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SingleIndexRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SingleIndexRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SingleIndexRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SingleIndexRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SingleIndexRequestValidationError) ErrorName() string {
+	return "SingleIndexRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SingleIndexRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSingleIndexRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SingleIndexRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SingleIndexRequestValidationError{}
+
+// Validate checks the field values on BatchIndexRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *BatchIndexRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on BatchIndexRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// BatchIndexRequestMultiError, or nil if none found.
+func (m *BatchIndexRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *BatchIndexRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetIndexDocs() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, BatchIndexRequestValidationError{
+						field:  fmt.Sprintf("IndexDocs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, BatchIndexRequestValidationError{
+						field:  fmt.Sprintf("IndexDocs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return BatchIndexRequestValidationError{
+					field:  fmt.Sprintf("IndexDocs[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for Database
+
+	if len(errors) > 0 {
+		return BatchIndexRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// BatchIndexRequestMultiError is an error wrapping multiple validation errors
+// returned by BatchIndexRequest.ValidateAll() if the designated constraints
+// aren't met.
+type BatchIndexRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m BatchIndexRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m BatchIndexRequestMultiError) AllErrors() []error { return m }
+
+// BatchIndexRequestValidationError is the validation error returned by
+// BatchIndexRequest.Validate if the designated constraints aren't met.
+type BatchIndexRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e BatchIndexRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e BatchIndexRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e BatchIndexRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e BatchIndexRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e BatchIndexRequestValidationError) ErrorName() string {
+	return "BatchIndexRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e BatchIndexRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sBatchIndexRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = BatchIndexRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = BatchIndexRequestValidationError{}
+
+// Validate checks the field values on RemoveIndexRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RemoveIndexRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RemoveIndexRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RemoveIndexRequestMultiError, or nil if none found.
+func (m *RemoveIndexRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RemoveIndexRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetId() < 1 {
+		err := RemoveIndexRequestValidationError{
+			field:  "Id",
+			reason: "value must be greater than or equal to 1",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Database
+
+	if len(errors) > 0 {
+		return RemoveIndexRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RemoveIndexRequestMultiError is an error wrapping multiple validation errors
+// returned by RemoveIndexRequest.ValidateAll() if the designated constraints
+// aren't met.
+type RemoveIndexRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RemoveIndexRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RemoveIndexRequestMultiError) AllErrors() []error { return m }
+
+// RemoveIndexRequestValidationError is the validation error returned by
+// RemoveIndexRequest.Validate if the designated constraints aren't met.
+type RemoveIndexRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RemoveIndexRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RemoveIndexRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RemoveIndexRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RemoveIndexRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RemoveIndexRequestValidationError) ErrorName() string {
+	return "RemoveIndexRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RemoveIndexRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRemoveIndexRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RemoveIndexRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RemoveIndexRequestValidationError{}
 
 // Validate checks the field values on StatusResponse with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
@@ -1584,3 +2094,109 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = EmptyResponseValidationError{}
+
+// Validate checks the field values on OperationResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *OperationResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on OperationResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// OperationResponseMultiError, or nil if none found.
+func (m *OperationResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *OperationResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for State
+
+	// no validation rules for Message
+
+	if len(errors) > 0 {
+		return OperationResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// OperationResponseMultiError is an error wrapping multiple validation errors
+// returned by OperationResponse.ValidateAll() if the designated constraints
+// aren't met.
+type OperationResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m OperationResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m OperationResponseMultiError) AllErrors() []error { return m }
+
+// OperationResponseValidationError is the validation error returned by
+// OperationResponse.Validate if the designated constraints aren't met.
+type OperationResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e OperationResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e OperationResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e OperationResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e OperationResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e OperationResponseValidationError) ErrorName() string {
+	return "OperationResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e OperationResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sOperationResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = OperationResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = OperationResponseValidationError{}
