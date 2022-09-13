@@ -22,10 +22,13 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GofoundServiceClient interface {
-	Welcome(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*WelcomeResponse, error)
-	GC(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	Welcome(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OperationResponse, error)
+	GC(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OperationResponse, error)
 	Status(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 	Query(ctx context.Context, in *QueryRequest, opts ...grpc.CallOption) (*QueryResponse, error)
+	Index(ctx context.Context, in *SingleIndexRequest, opts ...grpc.CallOption) (*OperationResponse, error)
+	BatchIndex(ctx context.Context, in *BatchIndexRequest, opts ...grpc.CallOption) (*OperationResponse, error)
+	RemoveIndex(ctx context.Context, in *RemoveIndexRequest, opts ...grpc.CallOption) (*OperationResponse, error)
 }
 
 type gofoundServiceClient struct {
@@ -36,8 +39,8 @@ func NewGofoundServiceClient(cc grpc.ClientConnInterface) GofoundServiceClient {
 	return &gofoundServiceClient{cc}
 }
 
-func (c *gofoundServiceClient) Welcome(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*WelcomeResponse, error) {
-	out := new(WelcomeResponse)
+func (c *gofoundServiceClient) Welcome(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OperationResponse, error) {
+	out := new(OperationResponse)
 	err := c.cc.Invoke(ctx, "/gofound.v1.GofoundService/Welcome", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -45,8 +48,8 @@ func (c *gofoundServiceClient) Welcome(ctx context.Context, in *EmptyRequest, op
 	return out, nil
 }
 
-func (c *gofoundServiceClient) GC(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
-	out := new(EmptyResponse)
+func (c *gofoundServiceClient) GC(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*OperationResponse, error) {
+	out := new(OperationResponse)
 	err := c.cc.Invoke(ctx, "/gofound.v1.GofoundService/GC", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -72,14 +75,44 @@ func (c *gofoundServiceClient) Query(ctx context.Context, in *QueryRequest, opts
 	return out, nil
 }
 
+func (c *gofoundServiceClient) Index(ctx context.Context, in *SingleIndexRequest, opts ...grpc.CallOption) (*OperationResponse, error) {
+	out := new(OperationResponse)
+	err := c.cc.Invoke(ctx, "/gofound.v1.GofoundService/Index", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gofoundServiceClient) BatchIndex(ctx context.Context, in *BatchIndexRequest, opts ...grpc.CallOption) (*OperationResponse, error) {
+	out := new(OperationResponse)
+	err := c.cc.Invoke(ctx, "/gofound.v1.GofoundService/BatchIndex", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gofoundServiceClient) RemoveIndex(ctx context.Context, in *RemoveIndexRequest, opts ...grpc.CallOption) (*OperationResponse, error) {
+	out := new(OperationResponse)
+	err := c.cc.Invoke(ctx, "/gofound.v1.GofoundService/RemoveIndex", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GofoundServiceServer is the server API for GofoundService service.
 // All implementations must embed UnimplementedGofoundServiceServer
 // for forward compatibility
 type GofoundServiceServer interface {
-	Welcome(context.Context, *EmptyRequest) (*WelcomeResponse, error)
-	GC(context.Context, *EmptyRequest) (*EmptyResponse, error)
+	Welcome(context.Context, *EmptyRequest) (*OperationResponse, error)
+	GC(context.Context, *EmptyRequest) (*OperationResponse, error)
 	Status(context.Context, *EmptyRequest) (*StatusResponse, error)
 	Query(context.Context, *QueryRequest) (*QueryResponse, error)
+	Index(context.Context, *SingleIndexRequest) (*OperationResponse, error)
+	BatchIndex(context.Context, *BatchIndexRequest) (*OperationResponse, error)
+	RemoveIndex(context.Context, *RemoveIndexRequest) (*OperationResponse, error)
 	mustEmbedUnimplementedGofoundServiceServer()
 }
 
@@ -87,10 +120,10 @@ type GofoundServiceServer interface {
 type UnimplementedGofoundServiceServer struct {
 }
 
-func (UnimplementedGofoundServiceServer) Welcome(context.Context, *EmptyRequest) (*WelcomeResponse, error) {
+func (UnimplementedGofoundServiceServer) Welcome(context.Context, *EmptyRequest) (*OperationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Welcome not implemented")
 }
-func (UnimplementedGofoundServiceServer) GC(context.Context, *EmptyRequest) (*EmptyResponse, error) {
+func (UnimplementedGofoundServiceServer) GC(context.Context, *EmptyRequest) (*OperationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GC not implemented")
 }
 func (UnimplementedGofoundServiceServer) Status(context.Context, *EmptyRequest) (*StatusResponse, error) {
@@ -98,6 +131,15 @@ func (UnimplementedGofoundServiceServer) Status(context.Context, *EmptyRequest) 
 }
 func (UnimplementedGofoundServiceServer) Query(context.Context, *QueryRequest) (*QueryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Query not implemented")
+}
+func (UnimplementedGofoundServiceServer) Index(context.Context, *SingleIndexRequest) (*OperationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Index not implemented")
+}
+func (UnimplementedGofoundServiceServer) BatchIndex(context.Context, *BatchIndexRequest) (*OperationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchIndex not implemented")
+}
+func (UnimplementedGofoundServiceServer) RemoveIndex(context.Context, *RemoveIndexRequest) (*OperationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveIndex not implemented")
 }
 func (UnimplementedGofoundServiceServer) mustEmbedUnimplementedGofoundServiceServer() {}
 
@@ -184,6 +226,60 @@ func _GofoundService_Query_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GofoundService_Index_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SingleIndexRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GofoundServiceServer).Index(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gofound.v1.GofoundService/Index",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GofoundServiceServer).Index(ctx, req.(*SingleIndexRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GofoundService_BatchIndex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchIndexRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GofoundServiceServer).BatchIndex(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gofound.v1.GofoundService/BatchIndex",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GofoundServiceServer).BatchIndex(ctx, req.(*BatchIndexRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GofoundService_RemoveIndex_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveIndexRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GofoundServiceServer).RemoveIndex(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gofound.v1.GofoundService/RemoveIndex",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GofoundServiceServer).RemoveIndex(ctx, req.(*RemoveIndexRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GofoundService_ServiceDesc is the grpc.ServiceDesc for GofoundService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +302,18 @@ var GofoundService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Query",
 			Handler:    _GofoundService_Query_Handler,
+		},
+		{
+			MethodName: "Index",
+			Handler:    _GofoundService_Index_Handler,
+		},
+		{
+			MethodName: "BatchIndex",
+			Handler:    _GofoundService_BatchIndex_Handler,
+		},
+		{
+			MethodName: "RemoveIndex",
+			Handler:    _GofoundService_RemoveIndex_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

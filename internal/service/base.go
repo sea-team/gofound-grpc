@@ -7,6 +7,7 @@ import (
 	"gofound-grpc/internal/searcher"
 	"gofound-grpc/internal/searcher/model"
 	"gofound-grpc/internal/searcher/system"
+	"google.golang.org/protobuf/types/known/structpb"
 	"runtime"
 
 	"google.golang.org/grpc/codes"
@@ -30,16 +31,20 @@ func NewBase() *Base {
 }
 
 // Welcome 欢迎语
-func (s *GofoundService) Welcome(ctx context.Context, req *gofoundpb.EmptyRequest) (resp *gofoundpb.WelcomeResponse, err error) {
-	return &gofoundpb.WelcomeResponse{
-		Msg: "Welcome to GoFound",
+func (s *GofoundService) Welcome(ctx context.Context, req *gofoundpb.EmptyRequest) (resp *gofoundpb.OperationResponse, err error) {
+	return &gofoundpb.OperationResponse{
+		State:   true,
+		Message: "Welcome to GoFound",
 	}, nil
 }
 
 // GC 释放GC
-func (s *GofoundService) GC(ctx context.Context, req *gofoundpb.EmptyRequest) (*gofoundpb.EmptyResponse, error) {
+func (s *GofoundService) GC(ctx context.Context, req *gofoundpb.EmptyRequest) (*gofoundpb.OperationResponse, error) {
 	go runtime.GC()
-	return &gofoundpb.EmptyResponse{}, nil
+	return &gofoundpb.OperationResponse{
+		State:   true,
+		Message: "success",
+	}, nil
 }
 
 // Status 服务器状态
@@ -86,12 +91,16 @@ func (s *GofoundService) Query(ctx context.Context, req *gofoundpb.QueryRequest)
 	if err != nil {
 		return nil, err
 	}
-	docs := make([]*gofoundpb.ResponseDoc, len(res.Documents))
+	docs := make([]*gofoundpb.ResponseDoc, 0)
 	for _, v := range res.Documents {
+		st, err := structpb.NewStruct(v.Document)
+		if err != nil {
+			return nil, err
+		}
 		docs = append(docs, &gofoundpb.ResponseDoc{
 			Id:           v.Id,
 			Text:         v.Text,
-			Document:     v.Document,
+			Document:     st,
 			OriginalText: v.OriginalText,
 			Score:        v.Score,
 			Keys:         v.Keys,
