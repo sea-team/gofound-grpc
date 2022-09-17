@@ -29,6 +29,10 @@ type GofoundServiceClient interface {
 	Index(ctx context.Context, in *SingleIndexRequest, opts ...grpc.CallOption) (*OperationResponse, error)
 	BatchIndex(ctx context.Context, in *BatchIndexRequest, opts ...grpc.CallOption) (*OperationResponse, error)
 	RemoveIndex(ctx context.Context, in *RemoveIndexRequest, opts ...grpc.CallOption) (*OperationResponse, error)
+	ShowDatabase(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*DatabaseResponse, error)
+	DropDatabase(ctx context.Context, in *DatabaseRequest, opts ...grpc.CallOption) (*OperationResponse, error)
+	CreateDatabase(ctx context.Context, in *DatabaseRequest, opts ...grpc.CallOption) (*OperationResponse, error)
+	WordCut(ctx context.Context, in *WordCutRequest, opts ...grpc.CallOption) (*WordCutResponse, error)
 }
 
 type gofoundServiceClient struct {
@@ -102,6 +106,42 @@ func (c *gofoundServiceClient) RemoveIndex(ctx context.Context, in *RemoveIndexR
 	return out, nil
 }
 
+func (c *gofoundServiceClient) ShowDatabase(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*DatabaseResponse, error) {
+	out := new(DatabaseResponse)
+	err := c.cc.Invoke(ctx, "/gofound.v1.GofoundService/ShowDatabase", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gofoundServiceClient) DropDatabase(ctx context.Context, in *DatabaseRequest, opts ...grpc.CallOption) (*OperationResponse, error) {
+	out := new(OperationResponse)
+	err := c.cc.Invoke(ctx, "/gofound.v1.GofoundService/DropDatabase", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gofoundServiceClient) CreateDatabase(ctx context.Context, in *DatabaseRequest, opts ...grpc.CallOption) (*OperationResponse, error) {
+	out := new(OperationResponse)
+	err := c.cc.Invoke(ctx, "/gofound.v1.GofoundService/CreateDatabase", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gofoundServiceClient) WordCut(ctx context.Context, in *WordCutRequest, opts ...grpc.CallOption) (*WordCutResponse, error) {
+	out := new(WordCutResponse)
+	err := c.cc.Invoke(ctx, "/gofound.v1.GofoundService/WordCut", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GofoundServiceServer is the server API for GofoundService service.
 // All implementations must embed UnimplementedGofoundServiceServer
 // for forward compatibility
@@ -113,6 +153,10 @@ type GofoundServiceServer interface {
 	Index(context.Context, *SingleIndexRequest) (*OperationResponse, error)
 	BatchIndex(context.Context, *BatchIndexRequest) (*OperationResponse, error)
 	RemoveIndex(context.Context, *RemoveIndexRequest) (*OperationResponse, error)
+	ShowDatabase(context.Context, *EmptyRequest) (*DatabaseResponse, error)
+	DropDatabase(context.Context, *DatabaseRequest) (*OperationResponse, error)
+	CreateDatabase(context.Context, *DatabaseRequest) (*OperationResponse, error)
+	WordCut(context.Context, *WordCutRequest) (*WordCutResponse, error)
 	mustEmbedUnimplementedGofoundServiceServer()
 }
 
@@ -140,6 +184,18 @@ func (UnimplementedGofoundServiceServer) BatchIndex(context.Context, *BatchIndex
 }
 func (UnimplementedGofoundServiceServer) RemoveIndex(context.Context, *RemoveIndexRequest) (*OperationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveIndex not implemented")
+}
+func (UnimplementedGofoundServiceServer) ShowDatabase(context.Context, *EmptyRequest) (*DatabaseResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ShowDatabase not implemented")
+}
+func (UnimplementedGofoundServiceServer) DropDatabase(context.Context, *DatabaseRequest) (*OperationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DropDatabase not implemented")
+}
+func (UnimplementedGofoundServiceServer) CreateDatabase(context.Context, *DatabaseRequest) (*OperationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateDatabase not implemented")
+}
+func (UnimplementedGofoundServiceServer) WordCut(context.Context, *WordCutRequest) (*WordCutResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WordCut not implemented")
 }
 func (UnimplementedGofoundServiceServer) mustEmbedUnimplementedGofoundServiceServer() {}
 
@@ -280,6 +336,78 @@ func _GofoundService_RemoveIndex_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GofoundService_ShowDatabase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GofoundServiceServer).ShowDatabase(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gofound.v1.GofoundService/ShowDatabase",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GofoundServiceServer).ShowDatabase(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GofoundService_DropDatabase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DatabaseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GofoundServiceServer).DropDatabase(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gofound.v1.GofoundService/DropDatabase",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GofoundServiceServer).DropDatabase(ctx, req.(*DatabaseRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GofoundService_CreateDatabase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DatabaseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GofoundServiceServer).CreateDatabase(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gofound.v1.GofoundService/CreateDatabase",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GofoundServiceServer).CreateDatabase(ctx, req.(*DatabaseRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GofoundService_WordCut_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WordCutRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GofoundServiceServer).WordCut(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gofound.v1.GofoundService/WordCut",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GofoundServiceServer).WordCut(ctx, req.(*WordCutRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GofoundService_ServiceDesc is the grpc.ServiceDesc for GofoundService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -314,6 +442,22 @@ var GofoundService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RemoveIndex",
 			Handler:    _GofoundService_RemoveIndex_Handler,
+		},
+		{
+			MethodName: "ShowDatabase",
+			Handler:    _GofoundService_ShowDatabase_Handler,
+		},
+		{
+			MethodName: "DropDatabase",
+			Handler:    _GofoundService_DropDatabase_Handler,
+		},
+		{
+			MethodName: "CreateDatabase",
+			Handler:    _GofoundService_CreateDatabase_Handler,
+		},
+		{
+			MethodName: "WordCut",
+			Handler:    _GofoundService_WordCut_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

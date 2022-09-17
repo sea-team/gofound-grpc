@@ -21,4 +21,6 @@ type Services struct {
 func NewServices() {
 	NewBase()
 	NewIndex()
+	NewDatabase()
+	NewWord()
 }

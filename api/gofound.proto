@@ -13,6 +13,10 @@ service GofoundService{
   rpc Index (SingleIndexRequest) returns (OperationResponse);
   rpc BatchIndex (BatchIndexRequest) returns (OperationResponse);
   rpc RemoveIndex (RemoveIndexRequest) returns (OperationResponse);
+  rpc ShowDatabase (EmptyRequest) returns (DatabaseResponse);
+  rpc DropDatabase (DatabaseRequest) returns (OperationResponse);
+  rpc CreateDatabase (DatabaseRequest) returns (OperationResponse);
+  rpc WordCut (WordCutRequest) returns (WordCutResponse);
 }
 
 message QueryResponse{
@@ -121,6 +125,23 @@ message System{
   bool enable_auth = 14;
 }
 
+message Engine{
+  string index_path = 1;
+  Options option = 2;
+  bool is_debug = 3;
+  string database_name = 4;
+  int32 shard = 5;
+  int64 timeout = 6;
+  int64 buff_num = 7;
+  // doc_count
+}
+
+message Options{
+  string inverted_index_name = 1;
+  string positive_index_name = 2;
+  string doc_index_name = 3;
+}
+
 message WelcomeResponse{
   string msg = 1;
 }
@@ -135,4 +156,21 @@ message EmptyResponse{}
 message OperationResponse{
   bool state = 1;
   string message = 2;
+}
+
+message DatabaseRequest{
+  string database_name = 1;
+}
+
+message WordCutRequest{
+  string key_word = 1;
+}
+
+message WordCutResponse{
+  repeated string word = 1;
+}
+
+message DatabaseResponse{
+  int32 len = 1;
+  map<string, Engine> databases = 2;
 }
