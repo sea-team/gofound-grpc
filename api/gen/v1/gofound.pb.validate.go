@@ -1794,6 +1794,249 @@ var _ interface {
 	ErrorName() string
 } = SystemValidationError{}
 
+// Validate checks the field values on Engine with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Engine) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Engine with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in EngineMultiError, or nil if none found.
+func (m *Engine) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Engine) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for IndexPath
+
+	if all {
+		switch v := interface{}(m.GetOption()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, EngineValidationError{
+					field:  "Option",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, EngineValidationError{
+					field:  "Option",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetOption()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return EngineValidationError{
+				field:  "Option",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for IsDebug
+
+	// no validation rules for DatabaseName
+
+	// no validation rules for Shard
+
+	// no validation rules for Timeout
+
+	// no validation rules for BuffNum
+
+	if len(errors) > 0 {
+		return EngineMultiError(errors)
+	}
+
+	return nil
+}
+
+// EngineMultiError is an error wrapping multiple validation errors returned by
+// Engine.ValidateAll() if the designated constraints aren't met.
+type EngineMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m EngineMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m EngineMultiError) AllErrors() []error { return m }
+
+// EngineValidationError is the validation error returned by Engine.Validate if
+// the designated constraints aren't met.
+type EngineValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e EngineValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e EngineValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e EngineValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e EngineValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e EngineValidationError) ErrorName() string { return "EngineValidationError" }
+
+// Error satisfies the builtin error interface
+func (e EngineValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sEngine.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = EngineValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = EngineValidationError{}
+
+// Validate checks the field values on Options with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Options) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Options with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in OptionsMultiError, or nil if none found.
+func (m *Options) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Options) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for InvertedIndexName
+
+	// no validation rules for PositiveIndexName
+
+	// no validation rules for DocIndexName
+
+	if len(errors) > 0 {
+		return OptionsMultiError(errors)
+	}
+
+	return nil
+}
+
+// OptionsMultiError is an error wrapping multiple validation errors returned
+// by Options.ValidateAll() if the designated constraints aren't met.
+type OptionsMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m OptionsMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m OptionsMultiError) AllErrors() []error { return m }
+
+// OptionsValidationError is the validation error returned by Options.Validate
+// if the designated constraints aren't met.
+type OptionsValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e OptionsValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e OptionsValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e OptionsValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e OptionsValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e OptionsValidationError) ErrorName() string { return "OptionsValidationError" }
+
+// Error satisfies the builtin error interface
+func (e OptionsValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sOptions.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = OptionsValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = OptionsValidationError{}
+
 // Validate checks the field values on WelcomeResponse with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.
@@ -2200,3 +2443,253 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = OperationResponseValidationError{}
+
+// Validate checks the field values on DatabaseRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *DatabaseRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DatabaseRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DatabaseRequestMultiError, or nil if none found.
+func (m *DatabaseRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DatabaseRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for DatabaseName
+
+	if len(errors) > 0 {
+		return DatabaseRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DatabaseRequestMultiError is an error wrapping multiple validation errors
+// returned by DatabaseRequest.ValidateAll() if the designated constraints
+// aren't met.
+type DatabaseRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DatabaseRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DatabaseRequestMultiError) AllErrors() []error { return m }
+
+// DatabaseRequestValidationError is the validation error returned by
+// DatabaseRequest.Validate if the designated constraints aren't met.
+type DatabaseRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DatabaseRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DatabaseRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DatabaseRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DatabaseRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DatabaseRequestValidationError) ErrorName() string { return "DatabaseRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e DatabaseRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDatabaseRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DatabaseRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DatabaseRequestValidationError{}
+
+// Validate checks the field values on DatabaseResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *DatabaseResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DatabaseResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DatabaseResponseMultiError, or nil if none found.
+func (m *DatabaseResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DatabaseResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Len
+
+	{
+		sorted_keys := make([]string, len(m.GetDatabases()))
+		i := 0
+		for key := range m.GetDatabases() {
+			sorted_keys[i] = key
+			i++
+		}
+		sort.Slice(sorted_keys, func(i, j int) bool { return sorted_keys[i] < sorted_keys[j] })
+		for _, key := range sorted_keys {
+			val := m.GetDatabases()[key]
+			_ = val
+
+			// no validation rules for Databases[key]
+
+			if all {
+				switch v := interface{}(val).(type) {
+				case interface{ ValidateAll() error }:
+					if err := v.ValidateAll(); err != nil {
+						errors = append(errors, DatabaseResponseValidationError{
+							field:  fmt.Sprintf("Databases[%v]", key),
+							reason: "embedded message failed validation",
+							cause:  err,
+						})
+					}
+				case interface{ Validate() error }:
+					if err := v.Validate(); err != nil {
+						errors = append(errors, DatabaseResponseValidationError{
+							field:  fmt.Sprintf("Databases[%v]", key),
+							reason: "embedded message failed validation",
+							cause:  err,
+						})
+					}
+				}
+			} else if v, ok := interface{}(val).(interface{ Validate() error }); ok {
+				if err := v.Validate(); err != nil {
+					return DatabaseResponseValidationError{
+						field:  fmt.Sprintf("Databases[%v]", key),
+						reason: "embedded message failed validation",
+						cause:  err,
+					}
+				}
+			}
+
+		}
+	}
+
+	if len(errors) > 0 {
+		return DatabaseResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// DatabaseResponseMultiError is an error wrapping multiple validation errors
+// returned by DatabaseResponse.ValidateAll() if the designated constraints
+// aren't met.
+type DatabaseResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DatabaseResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DatabaseResponseMultiError) AllErrors() []error { return m }
+
+// DatabaseResponseValidationError is the validation error returned by
+// DatabaseResponse.Validate if the designated constraints aren't met.
+type DatabaseResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DatabaseResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DatabaseResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DatabaseResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DatabaseResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DatabaseResponseValidationError) ErrorName() string { return "DatabaseResponseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e DatabaseResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDatabaseResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DatabaseResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DatabaseResponseValidationError{}
