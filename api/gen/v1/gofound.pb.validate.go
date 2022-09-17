@@ -2546,6 +2546,208 @@ var _ interface {
 	ErrorName() string
 } = DatabaseRequestValidationError{}
 
+// Validate checks the field values on WordCutRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *WordCutRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on WordCutRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in WordCutRequestMultiError,
+// or nil if none found.
+func (m *WordCutRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *WordCutRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for KeyWord
+
+	if len(errors) > 0 {
+		return WordCutRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// WordCutRequestMultiError is an error wrapping multiple validation errors
+// returned by WordCutRequest.ValidateAll() if the designated constraints
+// aren't met.
+type WordCutRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m WordCutRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m WordCutRequestMultiError) AllErrors() []error { return m }
+
+// WordCutRequestValidationError is the validation error returned by
+// WordCutRequest.Validate if the designated constraints aren't met.
+type WordCutRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e WordCutRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e WordCutRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e WordCutRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e WordCutRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e WordCutRequestValidationError) ErrorName() string { return "WordCutRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e WordCutRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sWordCutRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = WordCutRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = WordCutRequestValidationError{}
+
+// Validate checks the field values on WordCutResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *WordCutResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on WordCutResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// WordCutResponseMultiError, or nil if none found.
+func (m *WordCutResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *WordCutResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return WordCutResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// WordCutResponseMultiError is an error wrapping multiple validation errors
+// returned by WordCutResponse.ValidateAll() if the designated constraints
+// aren't met.
+type WordCutResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m WordCutResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m WordCutResponseMultiError) AllErrors() []error { return m }
+
+// WordCutResponseValidationError is the validation error returned by
+// WordCutResponse.Validate if the designated constraints aren't met.
+type WordCutResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e WordCutResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e WordCutResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e WordCutResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e WordCutResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e WordCutResponseValidationError) ErrorName() string { return "WordCutResponseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e WordCutResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sWordCutResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = WordCutResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = WordCutResponseValidationError{}
+
 // Validate checks the field values on DatabaseResponse with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.

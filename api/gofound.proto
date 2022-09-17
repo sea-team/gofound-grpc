@@ -16,6 +16,7 @@ service GofoundService{
   rpc ShowDatabase (EmptyRequest) returns (DatabaseResponse);
   rpc DropDatabase (DatabaseRequest) returns (OperationResponse);
   rpc CreateDatabase (DatabaseRequest) returns (OperationResponse);
+  rpc WordCut (WordCutRequest) returns (WordCutResponse);
 }
 
 message QueryResponse{
@@ -159,6 +160,14 @@ message OperationResponse{
 
 message DatabaseRequest{
   string database_name = 1;
+}
+
+message WordCutRequest{
+  string key_word = 1;
+}
+
+message WordCutResponse{
+  repeated string word = 1;
 }
 
 message DatabaseResponse{

@@ -22,4 +22,5 @@ func NewServices() {
 	NewBase()
 	NewIndex()
 	NewDatabase()
+	NewWord()
 }

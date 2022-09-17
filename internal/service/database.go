@@ -11,7 +11,7 @@ var (
 	database *Database
 )
 
-// Database 索引管理
+// Database 数据源管理
 type Database struct {
 	Container *searcher.Container
 }
