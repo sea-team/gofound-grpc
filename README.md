@@ -13,6 +13,8 @@
 -  启动
 
    ```
+   // 初始化需要的文件
+   make init
    // 启动grpc
    go run main.go
    // 启动gateway
@@ -22,5 +24,8 @@
 -  docker 部署
 
    ```
+   // 初始化需要的文件
+   make init
+   // 部署
    make build
    ```

@@ -1,7 +1,11 @@
 package global
 
-import "gofound-grpc/config"
+import (
+	"gofound-grpc/config"
+	"gofound-grpc/internal/searcher"
+)
 
 var (
-	CONFIG config.Server
+	CONFIG    config.Server
+	Container *searcher.Container
 )

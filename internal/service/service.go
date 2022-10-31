@@ -12,3 +12,15 @@ type GofoundService struct {
 func NewGofoundService() *GofoundService {
 	return &GofoundService{}
 }
+
+type Services struct {
+	Base  *Base
+	Index *Index
+}
+
+func NewServices() {
+	NewBase()
+	NewIndex()
+	NewDatabase()
+	NewWord()
+}

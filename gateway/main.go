@@ -21,6 +21,10 @@ func main() {
 
 	// 初始化解析器
 	initialize.InitViper(config)
+	// 初始化核心容器
+	global.Container = initialize.InitContainer()
+	// 初始化业务逻辑
+	initialize.InitService()
 
 	c, cancel := context.WithCancel(context.Background())
 	defer cancel()

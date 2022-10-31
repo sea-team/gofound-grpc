@@ -23,6 +23,10 @@ func main() {
 
 	// 初始化解析器
 	initialize.InitViper(config)
+	// 初始化容器
+	global.Container = initialize.InitContainer()
+	// 初始化业务逻辑
+	initialize.InitService()
 
 	// 启动服务
 	lis, err := net.Listen("tcp", global.CONFIG.GRPC.Addr)
@@ -32,7 +36,7 @@ func main() {
 
 	var opts []grpc.ServerOption
 	var in []grpc.UnaryServerInterceptor
-	in = append(in, interceptor.GrpcRecover())
+	in = append(in, interceptor.GrpcRecover(), interceptor.Validator())
 	if global.CONFIG.Auth.EnableAdmin {
 		in = append(in, interceptor.VerifyAuth())
 	}
